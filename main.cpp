@@ -2,8 +2,8 @@
 #include "RingBuffer.hpp"
 int main() 
 {
-	RingBuffer rb;
-	for(int i=0; i < RingBuffer::cap; i++)//fills bufferul
+	RingBuffer<int, 5> rb;
+	for(int i=0; i < RingBuffer::N; i++)//fills buffer
 		rb.push(i);
 	std::cout<<"size= "<<rb.size()<<std::endl<<"Full? "<<std::boolalpha<<rb.full()<<'\n';
 	bool ok=rb.push(9);

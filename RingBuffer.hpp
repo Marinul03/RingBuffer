@@ -1,33 +1,38 @@
 #include <array>
 #include <cstddef>
 #include <optional>
+#include <utility>
+template <typename T, std::size_t N>
 class RingBuffer{
 private:
-	std::array<int, cap> data{};
+	void adv_tail(){
+		tail=(tail+1)%N;
+		++count;
+	}
+	std::array<T, N> data{};
 	std::size_t head=0;
 	std::size_t tail=0;
 	std::size_t count=0;
 public:
-	static constexpr std::size_t cap=8; //fixed-size int
-	bool push(int val){
+	bool push(const T& val){
 		if (full()){
 			return false;
 		}
 		data[tail]=val;
-		tail=(tail+1)%cap;
-		++count;
+		adv_tail();
 		return true;
 	}
-	std::optional <int> pop(){
+	std::optional <T> pop(){
 		if(empty()){
 			return std::nullopt;
 		}
-		int value = data[head];
-		head=(head+1)%cap;
+		std::optional<T> val{std::move(data[head])};
+		head=(head+1)%N;
 		--count;
 		return val;
 	}
-	std::size_t size() const noexcept {return count;}
-	bool empty() const noexcept {return count==0;}
-	bool full() const noexcept {return count==cap;}
+	constexpr std::size_t size() const noexcept {return count;}
+	constexpr bool empty() const noexcept {return count==0;}
+	constexpr bool full() const noexcept {return count==N;}
+	static constexpr std::size_t capacity() {return N}
 }
